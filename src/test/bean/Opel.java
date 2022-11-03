@@ -4,11 +4,11 @@ import annotations.Bean;
 import annotations.Qualifier;
 
 @Bean
-@Qualifier(value = "mercedes")
-public class MercedesBenz implements Car {
+@Qualifier(value = "astra")
+public class Opel implements Car {
 
     @Override
     public String getModel() {
-        return "GLK";
+        return "Astra";
     }
 }

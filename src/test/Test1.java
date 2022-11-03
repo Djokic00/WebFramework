@@ -13,8 +13,8 @@ public class Test1 {
     private Car audi;
 
     @Autowired(verbose = true)
-    @Qualifier("mercedes")
-    private Car mercedes;
+    @Qualifier("opel")
+    private Car opel;
 
     @Path(path = "/getCar")
     @GET

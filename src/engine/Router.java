@@ -1,4 +1,4 @@
-package framework;
+package engine;
 
 import annotations.http.GET;
 import annotations.http.POST;
@@ -9,17 +9,20 @@ import model.response.Response;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
-public class Framework {
-    public static final List<Class> controllerClasses = new ArrayList<>();
+public class Router {
     public static final HashMap<String, Method> methodsWithGetAnnotation = new HashMap<>();
     public static final HashMap<String, Method> methodsWithPostAnnotation = new HashMap<>();
+    private static Router instance = null;
+    public static Router getInstance(){
+        if (instance == null){
+            instance = new Router();
+        }
+        return instance;
+    }
 
-    public static void addControllerClass(Class cl) {
-        controllerClasses.add(cl);
+    public void mapRoutes(Class cl) {
         Method[] methods = cl.getDeclaredMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(Path.class)) {
@@ -34,14 +37,15 @@ public class Framework {
         }
     }
 
-    public static Response getResponse(Request request) throws InvocationTargetException, IllegalAccessException {
+    public Response getResponse(Request request) throws InvocationTargetException, IllegalAccessException {
 
         if (request.getLocation().endsWith("favicon.ico")) {
             return null;
         }
         if (request.getMethod().toString().equals("GET")) {
             Method methodGet = methodsWithGetAnnotation.get(request.getLocation());
-            return (Response) methodGet.invoke(DIEngine.initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), request);
+            System.out.println(methodsWithGetAnnotation);
+            return (Response) methodGet.invoke(DIEngine.getInstance().initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), request);
         }
         else if (request.getMethod().toString().equals("POST")) {
             String path = request.getLocation();
@@ -49,7 +53,7 @@ public class Framework {
             if (params > -1)
                 path = path.substring(0, params);
             Method methodPost = methodsWithPostAnnotation.get(path);
-            return (Response) methodPost.invoke(DIEngine.initializedControllerClasses.get(methodPost.getDeclaringClass().getName()), request);
+            return (Response) methodPost.invoke(DIEngine.getInstance().initializedControllerClasses.get(methodPost.getDeclaringClass().getName()), request);
         }
 
         return null;

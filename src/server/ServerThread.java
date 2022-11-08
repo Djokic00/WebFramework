@@ -1,6 +1,6 @@
 package server;
 
-import framework.Framework;
+import engine.Router;
 import model.request.Header;
 import model.request.Helper;
 import model.request.Request;
@@ -36,7 +36,7 @@ public class ServerThread implements Runnable {
                 socket.close();
                 return;
             }
-            Response response = Framework.getResponse(request);
+            Response response = Router.getInstance().getResponse(request);
             if (response != null) {
                 response.getHeader().add("Content-Type", "application/json");
                 out.println(response.render());

@@ -10,7 +10,7 @@ public class Server {
 
     public static void main(String[] args) {
         try {
-            DIEngine.initClasses();
+            DIEngine.getInstance().initClasses();
             ServerSocket serverSocket = new ServerSocket(TCP_PORT);
             System.out.println("Server is running at http://localhost:" + TCP_PORT);
             while (true) {

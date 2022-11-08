@@ -1,28 +1,35 @@
 package engine;
 
 import annotations.di.*;
-import framework.Framework;
-import test.component.ComponentTest;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class DIEngine {
-    public static HashMap<String, Object> initializedClasses = new HashMap<>();
-    public static HashMap<String, Object> initializedControllerClasses = new HashMap<>();
 
-    private static HashMap<String, Class> qualifiers = new HashMap<>();
+    private static DIEngine instance = null;
+    private HashMap<String, Object> initializedClasses = new HashMap<>();
+    public HashMap<String, Object> initializedControllerClasses = new HashMap<>();
+    private static DIContainer dependencyContainer = DIContainer.getInstance();
 
-    public static void initClasses() throws Exception {
+    public static DIEngine getInstance() {
+        if (instance == null) {
+            instance = new DIEngine();
+        }
+        return instance;
+    }
+
+    public void initClasses() throws Exception {
         List<Class> allClasses = getAllClasses("");
         System.out.println("-----------All classes are initialized-----------\n");
         for (Class cl : allClasses) {
             if (cl.isAnnotationPresent(Controller.class)) {
-                Framework.addControllerClass(cl);
+                Router.getInstance().mapRoutes(cl);
                 initializedControllerClasses.put(cl.getName(), cl.getConstructor().newInstance());
                 initializedClasses.put(cl.getName(), cl.getConstructor().newInstance());
             }
@@ -35,8 +42,8 @@ public class DIEngine {
             if (cl.isAnnotationPresent(Qualifier.class) && (cl.isAnnotationPresent(Bean.class) ||
                     cl.isAnnotationPresent(Service.class) || cl.isAnnotationPresent(Component.class))) {
                 String value = ((Qualifier) cl.getDeclaredAnnotation(Qualifier.class)).value();
-                if (qualifiers.get(value) == null) {
-                    qualifiers.put(value, cl);
+                if (dependencyContainer.getQualifiers().get(value) == null) {
+                    dependencyContainer.getQualifiers().put(value, cl);
                 }
                 else throw new Exception("Class already has qualifier");
             }
@@ -57,9 +64,9 @@ public class DIEngine {
                     File[] files = entry.listFiles();
                     if (files != null) {
                         for (File file :  files) {
-                            System.out.println("Class " + file.getName());
                             String name = file.getName();
                             if (name.endsWith(".class")) {
+                                System.out.println("Class " + file.getName());
                                 name = name.replace(".class", "");
                                 packageName = packageName.replace("/", ".");
                                 allClasses.add(Class.forName(packageName + "." + name));
@@ -80,7 +87,7 @@ public class DIEngine {
         return allClasses;
     }
 
-    public static void dependencyInjection(Object object) throws Exception {
+    public void dependencyInjection(Object object) throws Exception {
         Class cl = object.getClass();
         Field[] fields = cl.getDeclaredFields();
         for (Field field : fields) {
@@ -95,15 +102,15 @@ public class DIEngine {
         }
     }
 
-    public static void setField(Field field, Object object, boolean isInterface) throws Exception {
+    public void setField(Field field, Object object, boolean isInterface) throws Exception {
         boolean isVerbose = field.getAnnotation(Autowired.class).verbose();
         Class classType;
         if (isInterface) {
             String value = field.getAnnotation(Qualifier.class).value();
-            if (qualifiers.get(value) == null) {
+            if (dependencyContainer.getQualifiers().get(value) == null) {
                 throw new Exception("No bean for qualifier");
             }
-            classType = qualifiers.get(value);
+            classType = dependencyContainer.getQualifiers().get(value);
         }
         else classType = field.getType();
 
@@ -111,16 +118,16 @@ public class DIEngine {
         if (instance != null) {
             field.setAccessible(true);
             field.set(object, instance);
-//            if (isVerbose) {
+            if (isVerbose) {
                 System.out.println("Initialized " + classType.getName() + " " + field.getName() + " " +
                         "in " + object.getClass().getName() + " on " + LocalDateTime.now() +
                         " with " + field.hashCode());
-//            }
+            }
             dependencyInjection(instance);
         }
     }
 
-    public static Object getInstance(Class classType) throws Exception {
+    public Object getInstance(Class classType) throws Exception {
         Object returnValue;
 
         if (classType.isAnnotationPresent(Bean.class)) {

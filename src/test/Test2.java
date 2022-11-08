@@ -8,7 +8,6 @@ import annotations.http.Path;
 import model.request.Request;
 import model.response.JsonResponse;
 import model.response.Response;
-import test.bean.Audi;
 import test.bean.Person;
 import test.component.ComponentTest;
 import test.service.ServiceTest;
@@ -41,6 +40,7 @@ public class Test2 {
     @Path(path = "/postService")
     @POST
     public Response postService(Request req) {
+        serviceTest.setRepository(req.getParameter("repository"));
         Response response = new JsonResponse(serviceTest);
         return response;
     }

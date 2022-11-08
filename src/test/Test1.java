@@ -1,6 +1,7 @@
 package test;
 
 import annotations.*;
+import model.request.Request;
 import model.response.JsonResponse;
 import model.response.Response;
 import test.bean.Car;
@@ -13,18 +14,20 @@ public class Test1 {
     private Car audi;
 
     @Autowired(verbose = true)
-    @Qualifier("opel")
+    @Qualifier("astra")
     private Car opel;
 
     @Path(path = "/getCar")
     @GET
-    public void get() {
+    public Response getCar(Request request) {
         Response response = new JsonResponse(audi);
+        return response;
     }
 
     @Path(path = "/postCar")
     @POST
-    public void post() {
-
+    public Response postCar(Request request) {
+        Response response = new JsonResponse(opel);
+        return response;
     }
 }

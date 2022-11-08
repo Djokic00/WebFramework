@@ -1,8 +1,8 @@
 package framework;
 
-import annotations.GET;
-import annotations.POST;
-import annotations.Path;
+import annotations.http.GET;
+import annotations.http.POST;
+import annotations.http.Path;
 import engine.Engine;
 import model.request.Request;
 import model.response.Response;
@@ -34,14 +34,18 @@ public class Framework {
         }
     }
 
-    public static Response getResponse(Request req) throws InvocationTargetException, IllegalAccessException {
-        if (req.getMethod().toString().equals("GET")) {
-            Method methodGet = methodsWithGetAnnotation.get(req.getLocation());
-            return (Response) methodGet.invoke(Engine.initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), req);
+    public static Response getResponse(Request request) throws InvocationTargetException, IllegalAccessException {
+        System.out.println(methodsWithGetAnnotation);
+        if (request.getLocation().endsWith("favicon.ico")) {
+            return null;
         }
-        else if (req.getMethod().toString().equals("POST")) {
-            Method methodPost = methodsWithPostAnnotation.get(req.getLocation());
-            return (Response) methodPost.invoke(Engine.initializedClasses.get(methodPost.getDeclaringClass().getName()), req);
+        if (request.getMethod().toString().equals("GET")) {
+            Method methodGet = methodsWithGetAnnotation.get(request.getLocation());
+            return (Response) methodGet.invoke(Engine.initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), request);
+        }
+        else if (request.getMethod().toString().equals("POST")) {
+            Method methodPost = methodsWithPostAnnotation.get(request.getLocation());
+            return (Response) methodPost.invoke(Engine.initializedClasses.get(methodPost.getDeclaringClass().getName()), request);
         }
 
         return null;

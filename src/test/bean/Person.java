@@ -1,7 +1,7 @@
 package test.bean;
 
-import annotations.Autowired;
-import annotations.Bean;
+import annotations.di.Autowired;
+import annotations.di.Bean;
 
 @Bean
 public class Person {

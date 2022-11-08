@@ -1,14 +1,16 @@
 package test.bean;
 
-import annotations.Bean;
-import annotations.Qualifier;
+import annotations.di.Bean;
+import annotations.di.Qualifier;
 
 @Bean
 @Qualifier(value = "audi")
 public class Audi implements Car {
-
     @Override
     public String getModel() {
         return "A6";
-    };
+    }
+
+    public Audi() {}
+
 }

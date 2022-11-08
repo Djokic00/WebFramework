@@ -1,6 +1,10 @@
 package test;
 
-import annotations.*;
+import annotations.di.Autowired;
+import annotations.di.Controller;
+import annotations.http.GET;
+import annotations.http.POST;
+import annotations.http.Path;
 import model.request.Request;
 import model.response.JsonResponse;
 import model.response.Response;

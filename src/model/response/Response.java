@@ -10,4 +10,8 @@ public abstract class Response {
     }
 
     public abstract String render();
+
+    public Header getHeader() {
+        return header;
+    }
 }

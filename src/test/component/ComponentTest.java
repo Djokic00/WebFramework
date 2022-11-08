@@ -1,13 +1,19 @@
 package test.component;
 
-import annotations.Autowired;
-import annotations.Component;
+import annotations.di.Component;
 
 @Component
 public class ComponentTest {
 
-    @Autowired(verbose = true)
-    private ComponentTest componentTest;
+    private String message = "Hello from ComponentTest class";
 
     public ComponentTest() {}
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

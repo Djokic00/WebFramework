@@ -1,6 +1,6 @@
 package test.bean;
 
-import annotations.Bean;
+import annotations.di.Bean;
 
 @Bean(singleton = false)
 public class Address {

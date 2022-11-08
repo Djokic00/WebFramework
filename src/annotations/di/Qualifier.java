@@ -1,4 +1,4 @@
-package annotations;
+package annotations.di;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface Autowired {
-    boolean verbose();
+@Target({ ElementType.TYPE, ElementType.FIELD })
+public @interface Qualifier {
+    String value();
 }

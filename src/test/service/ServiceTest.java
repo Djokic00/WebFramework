@@ -1,6 +1,6 @@
 package test.service;
 
-import annotations.Service;
+import annotations.di.Service;
 
 @Service
 public class ServiceTest {

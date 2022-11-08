@@ -1,12 +1,15 @@
 package server;
 
+import framework.Framework;
 import model.request.Header;
 import model.request.Helper;
 import model.request.Request;
 import model.request.enums.Method;
 import model.request.exceptions.RequestNotValidException;
+import model.response.Response;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.util.HashMap;
 
@@ -15,7 +18,7 @@ public class ServerThread implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
 
-    public ServerThread(Socket socket){
+    public ServerThread(Socket socket) {
         this.socket = socket;
         try {
             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -24,8 +27,7 @@ public class ServerThread implements Runnable {
             e.printStackTrace();
         }
     }
-
-    public void run(){
+    public void run() {
         try {
             Request request = this.generateRequest();
             if (request == null) {
@@ -34,18 +36,24 @@ public class ServerThread implements Runnable {
                 socket.close();
                 return;
             }
+            Response response = Framework.getResponse(request);
+            if (response != null) {
+                response.getHeader().add("Content-Type", "application/json");
+                out.println(response.render());
+            }
             in.close();
             out.close();
             socket.close();
 
-        } catch (IOException | RequestNotValidException e) {
+        } catch (IOException | RequestNotValidException | InvocationTargetException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
     private Request generateRequest() throws IOException, RequestNotValidException {
         String command = in.readLine();
-        if(command == null) {
+        System.out.println(command);
+        if (command == null) {
             return null;
         }
 

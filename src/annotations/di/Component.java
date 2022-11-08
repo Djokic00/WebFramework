@@ -1,4 +1,4 @@
-package annotations;
+package annotations.di;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

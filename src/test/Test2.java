@@ -15,10 +15,6 @@ import test.service.ServiceTest;
 
 @Controller
 public class Test2 {
-
-    @Autowired(verbose = false)
-    private Audi audi;
-
     @Autowired(verbose = true)
     private Person person;
 
@@ -28,42 +24,31 @@ public class Test2 {
     @Autowired(verbose = false)
     private ComponentTest componentTest;
 
-    @Path(path = "/getAudi")
-    @GET
-    public Response getCar(Request req) {
-        System.out.println("Route hit: getAudi");
-        Response response = new JsonResponse(audi);
-        return response;
-    }
-
     @Path(path = "/getPerson")
     @GET
     public Response getPerson(Request req) {
-        System.out.println("Route hit: getPerson");
         Response response = new JsonResponse(person);
         return response;
     }
 
     @Path(path = "/getComponent")
     @GET
-    public Response testComponent(Request req) {
-        System.out.println("Route hit: getComponent");
+    public Response getComponent(Request req) {
         Response response = new JsonResponse(componentTest);
         return response;
     }
 
     @Path(path = "/postService")
     @POST
-    public Response testService(Request req) {
-        System.out.println("Route hit: postService");
+    public Response postService(Request req) {
         Response response = new JsonResponse(serviceTest);
         return response;
     }
 
-    @Path(path = "/changePersonName")
+    @Path(path = "/postPerson")
     @POST
-    public Response changePerson(Request req) {
-        person.setName("Nikola");
+    public Response postPerson(Request req) {
+        person.setName("nikola");
         Response response = new JsonResponse(person);
         return response;
     }

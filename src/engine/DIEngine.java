@@ -2,6 +2,8 @@ package engine;
 
 import annotations.di.*;
 import framework.Framework;
+import test.component.ComponentTest;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class Engine {
+public class DIEngine {
     public static HashMap<String, Object> initializedClasses = new HashMap<>();
     public static HashMap<String, Object> initializedControllerClasses = new HashMap<>();
 
@@ -26,7 +28,7 @@ public class Engine {
             }
 
             if ((cl.isAnnotationPresent(Bean.class) && ((Bean) cl.getAnnotation(Bean.class)).singleton())
-                    || cl.isAnnotationPresent(Service.class)) {
+                    || cl.isAnnotationPresent(Service.class) || cl.isAnnotationPresent(Component.class)) {
                 initializedClasses.put(cl.getName(), cl.getConstructor().newInstance());
             }
 
@@ -133,8 +135,8 @@ public class Engine {
         }
         else if (classType.isAnnotationPresent(Component.class)) {
             boolean scope = ((Component) classType.getAnnotation(Component.class)).singleton();
-            if (scope) returnValue = classType.getConstructor().newInstance();
-            else returnValue = initializedClasses.get(classType.getName());
+            if (scope) returnValue = initializedClasses.get(classType.getName());
+            else returnValue = classType.getConstructor().newInstance();
         }
         else {
             throw new Exception("Autowired attribute is not a Bean, Service or Component");

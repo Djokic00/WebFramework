@@ -52,7 +52,6 @@ public class ServerThread implements Runnable {
 
     private Request generateRequest() throws IOException, RequestNotValidException {
         String command = in.readLine();
-        System.out.println(command);
         if (command == null) {
             return null;
         }
@@ -71,12 +70,11 @@ public class ServerThread implements Runnable {
             }
         } while (!command.trim().equals(""));
 
-        if (method.equals(Method.POST)) {
+        if (method.equals(Method.POST) && header.get("Content-Length") != null) {
             int contentLength = Integer.parseInt(header.get("Content-Length"));
             char[] buff = new char[contentLength];
             in.read(buff, 0, contentLength);
             String parametersString = new String(buff);
-
             HashMap<String, String> postParameters = Helper.getParametersFromString(parametersString);
             for (String parameterName : postParameters.keySet()) {
                 parameters.put(parameterName, postParameters.get(parameterName));

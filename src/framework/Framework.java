@@ -3,7 +3,7 @@ package framework;
 import annotations.http.GET;
 import annotations.http.POST;
 import annotations.http.Path;
-import engine.Engine;
+import engine.DIEngine;
 import model.request.Request;
 import model.response.Response;
 
@@ -35,17 +35,21 @@ public class Framework {
     }
 
     public static Response getResponse(Request request) throws InvocationTargetException, IllegalAccessException {
-        System.out.println(methodsWithGetAnnotation);
+
         if (request.getLocation().endsWith("favicon.ico")) {
             return null;
         }
         if (request.getMethod().toString().equals("GET")) {
             Method methodGet = methodsWithGetAnnotation.get(request.getLocation());
-            return (Response) methodGet.invoke(Engine.initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), request);
+            return (Response) methodGet.invoke(DIEngine.initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), request);
         }
         else if (request.getMethod().toString().equals("POST")) {
-            Method methodPost = methodsWithPostAnnotation.get(request.getLocation());
-            return (Response) methodPost.invoke(Engine.initializedClasses.get(methodPost.getDeclaringClass().getName()), request);
+            String path = request.getLocation();
+            int params = path.indexOf('?');
+            if (params > -1)
+                path = path.substring(0, params);
+            Method methodPost = methodsWithPostAnnotation.get(path);
+            return (Response) methodPost.invoke(DIEngine.initializedControllerClasses.get(methodPost.getDeclaringClass().getName()), request);
         }
 
         return null;

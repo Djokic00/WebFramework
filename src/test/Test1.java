@@ -32,7 +32,7 @@ public class Test1 {
         responseMap.put("ClassName: ", "Test1");
         responseMap.put("route_method", request.getMethod());
         responseMap.put("route_location", request.getLocation());
-        responseMap.put("return_value", audi.getModel());
+        responseMap.put("return_value", audi);
         Response response = new JsonResponse(responseMap);
         return response;
     }

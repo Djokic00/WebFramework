@@ -128,24 +128,20 @@ public class DIEngine {
     }
 
     public Object getInstance(Class classType) throws Exception {
-        Object returnValue;
-
         if (classType.isAnnotationPresent(Bean.class)) {
             boolean scope = ((Bean) classType.getAnnotation(Bean.class)).singleton();
-            if (scope) returnValue = initializedClasses.get(classType.getName());
-            else returnValue = classType.getConstructor().newInstance();
+            if (scope) return initializedClasses.get(classType.getName());
+            else return classType.getConstructor().newInstance();
         }
         else if (classType.isAnnotationPresent(Service.class)) {
-            returnValue = initializedClasses.get(classType.getName());
+            return initializedClasses.get(classType.getName());
         }
         else if (classType.isAnnotationPresent(Component.class)) {
-            returnValue = classType.getConstructor().newInstance();
+            return classType.getConstructor().newInstance();
         }
         else {
             throw new Exception("Autowired attribute is not a Bean, Service or Component");
         }
-
-        return returnValue;
     }
 
 }

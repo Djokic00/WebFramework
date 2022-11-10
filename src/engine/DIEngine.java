@@ -15,7 +15,7 @@ public class DIEngine {
     private static DIEngine instance = null;
     private HashMap<String, Object> initializedClasses = new HashMap<>();
     public HashMap<String, Object> initializedControllerClasses = new HashMap<>();
-    private static DIContainer dependencyContainer = DIContainer.getInstance();
+    private DIContainer dependencyContainer = DIContainer.getInstance();
 
     public static DIEngine getInstance() {
         if (instance == null) {
@@ -35,7 +35,7 @@ public class DIEngine {
             }
 
             if ((cl.isAnnotationPresent(Bean.class) && ((Bean) cl.getAnnotation(Bean.class)).singleton())
-                    || cl.isAnnotationPresent(Service.class) || cl.isAnnotationPresent(Component.class)) {
+                    || cl.isAnnotationPresent(Service.class)) {
                 initializedClasses.put(cl.getName(), cl.getConstructor().newInstance());
             }
 
@@ -136,14 +136,10 @@ public class DIEngine {
             else returnValue = classType.getConstructor().newInstance();
         }
         else if (classType.isAnnotationPresent(Service.class)) {
-            boolean scope = ((Service) classType.getAnnotation(Service.class)).singleton();
-            if (scope) returnValue = initializedClasses.get(classType.getName());
-            else returnValue = classType.getConstructor().newInstance();
+            returnValue = initializedClasses.get(classType.getName());
         }
         else if (classType.isAnnotationPresent(Component.class)) {
-            boolean scope = ((Component) classType.getAnnotation(Component.class)).singleton();
-            if (scope) returnValue = initializedClasses.get(classType.getName());
-            else returnValue = classType.getConstructor().newInstance();
+            returnValue = classType.getConstructor().newInstance();
         }
         else {
             throw new Exception("Autowired attribute is not a Bean, Service or Component");

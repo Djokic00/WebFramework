@@ -45,7 +45,7 @@ public class DIEngine {
                 if (dependencyContainer.getQualifiers().get(value) == null) {
                     dependencyContainer.getQualifiers().put(value, cl);
                 }
-                else throw new Exception("Class already has qualifier");
+                else throw new Exception("Class with the same qualifier already exist, error in class: " + cl.getName());
             }
         }
 

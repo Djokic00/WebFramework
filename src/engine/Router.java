@@ -26,18 +26,16 @@ public class Router {
         for (Method method : methods) {
             if (method.isAnnotationPresent(Path.class)) {
                 String path = method.getAnnotation(Path.class).path();
-                if (method.isAnnotationPresent(GET.class) || method.isAnnotationPresent(POST.class)) {
+                if (method.isAnnotationPresent(GET.class) || method.isAnnotationPresent(POST.class))
                     methodsWithGetAndPostAnnotations.put(path, method);
-                }
             }
         }
     }
 
     public Response getResponse(Request request) throws InvocationTargetException, IllegalAccessException {
 
-        if (request.getLocation().endsWith("favicon.ico")) {
-            return null;
-        }
+        if (request.getLocation().endsWith("favicon.ico")) return null;
+
         if (request.getMethod().toString().equals("GET")) {
             Method methodGet = methodsWithGetAndPostAnnotations.get(request.getLocation());
             System.out.println(methodsWithGetAndPostAnnotations);

@@ -12,8 +12,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 
 public class Router {
-    public static final HashMap<String, Method> methodsWithGetAnnotation = new HashMap<>();
-    public static final HashMap<String, Method> methodsWithPostAnnotation = new HashMap<>();
+    public HashMap<String, Method> methodsWithGetAndPostAnnotations = new HashMap<>();
     private static Router instance = null;
     public static Router getInstance(){
         if (instance == null){
@@ -27,11 +26,8 @@ public class Router {
         for (Method method : methods) {
             if (method.isAnnotationPresent(Path.class)) {
                 String path = method.getAnnotation(Path.class).path();
-                if (method.isAnnotationPresent(GET.class)) {
-                    methodsWithGetAnnotation.put(path, method);
-                }
-                else if (method.isAnnotationPresent(POST.class)) {
-                    methodsWithPostAnnotation.put(path, method);
+                if (method.isAnnotationPresent(GET.class) || method.isAnnotationPresent(POST.class)) {
+                    methodsWithGetAndPostAnnotations.put(path, method);
                 }
             }
         }
@@ -43,8 +39,8 @@ public class Router {
             return null;
         }
         if (request.getMethod().toString().equals("GET")) {
-            Method methodGet = methodsWithGetAnnotation.get(request.getLocation());
-            System.out.println(methodsWithGetAnnotation);
+            Method methodGet = methodsWithGetAndPostAnnotations.get(request.getLocation());
+            System.out.println(methodsWithGetAndPostAnnotations);
             return (Response) methodGet.invoke(DIEngine.getInstance().initializedControllerClasses.get(methodGet.getDeclaringClass().getName()), request);
         }
         else if (request.getMethod().toString().equals("POST")) {
@@ -52,7 +48,7 @@ public class Router {
             int params = path.indexOf('?');
             if (params > -1)
                 path = path.substring(0, params);
-            Method methodPost = methodsWithPostAnnotation.get(path);
+            Method methodPost = methodsWithGetAndPostAnnotations.get(path);
             return (Response) methodPost.invoke(DIEngine.getInstance().initializedControllerClasses.get(methodPost.getDeclaringClass().getName()), request);
         }
 
